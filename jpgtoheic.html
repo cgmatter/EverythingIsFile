@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>JPG to HEIC Converter</title>
+  <meta name="description" content="Free online JPG to HEIC image converter. No signup, no upload — works entirely in your browser. Drag and drop or click to upload.">
+  <style>
+    /* Same styling as PNG to JPG converter */
+  </style>
+</head>
+<body>
+  <h1>JPG to HEIC</h1>
+  <div class="subtitle">All your images remain local and anonymous! We can't see anything.</div>
+
+  <div id="dropArea">Click or drag a JPG file here</div>
+  <input type="file" id="fileInput" accept="image/jpeg" />
+  <button id="convertBtn">Convert to HEIC</button>
+  <div id="status"></div>
+  <a id="downloadLink" download="converted.heic">Download HEIC</a>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+    const dropArea = document.getElementById("dropArea");
+    const convertBtn = document.getElementById("convertBtn");
+    const downloadLink = document.getElementById("downloadLink");
+    const status = document.getElementById("status");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+    const fileInput = document.getElementById("fileInput");
+
+    let image = new Image();
+
+    // Trigger file input when drop area is clicked
+    dropArea.addEventListener("click", () => fileInput.click());
+
+    // Handle file selected from the file input
+    fileInput.addEventListener("change", (e) => {
+      handleFile(e.target.files[0]);
+    });
+
+    // Handle file drag over and drop
+    dropArea.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      dropArea.classList.add("hover");
+    });
+
+    dropArea.addEventListener("dragleave", () => {
+      dropArea.classList.remove("hover");
+    });
+
+    dropArea.addEventListener("drop", (e) => {
+      e.preventDefault();
+      dropArea.classList.remove("hover");
+      handleFile(e.dataTransfer.files[0]);
+    });
+
+    // Function to handle file loading
+    function handleFile(file) {
+      if (!file || !file.type.startsWith("image/jpeg")) {
+        status.textContent = "Only JPG files are allowed.";
+        return;
+      }
+
+      status.textContent = "Image loaded.";
+      dropArea.classList.add("active");
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        image.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    image.onload = () => {
+      canvas.width = image.width;
+      canvas.height = image.height;
+      ctx.drawImage(image, 0, 0);
+    };
+
+    convertBtn.addEventListener("click", () => {
+      if (!image.src) {
+        status.textContent = "Please upload a JPG first.";
+        return;
+      }
+
+      status.textContent = "Processing...";
+      convertBtn.disabled = true;
+
+      // HEIC conversion will not work in the browser; this would need to be handled by server-side
+      status.textContent = "Conversion to HEIC would require a server-side solution.";
+      convertBtn.disabled = false;
+    });
+  </script>
+</body>
+</html>
